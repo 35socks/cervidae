@@ -1,31 +1,403 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>cervidae</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: white;
-            /* Flexbox makes centering incredibly easy */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cervidae</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Raleway:wght@100;300;400&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        img {
-            max-width: 90%;
-            max-height: 90vh;
-            display: block;
-        }
-    </style>
+    body {
+      min-height: 100vh;
+      background: #fff;
+      color: #1a1410;
+      font-family: 'Raleway', sans-serif;
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      cursor: none;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    #cursor {
+      width: 16px; height: 16px;
+      border: 1px solid #1a1410;
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: width 0.15s, height 0.15s, opacity 0.15s;
+      mix-blend-mode: multiply;
+    }
+    #cursor-dot {
+      width: 4px; height: 4px;
+      background: #1a1410;
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      mix-blend-mode: multiply;
+    }
+    #cursor.big { width: 40px; height: 40px; opacity: 0.4; }
+
+    #grain {
+      position: fixed; inset: 0;
+      pointer-events: none;
+      z-index: 100;
+      opacity: 0.12;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+      animation: grain 0.4s steps(2) infinite;
+    }
+    @keyframes grain {
+      0%,100% { transform: translate(0,0); }
+      25% { transform: translate(-2px, 1px); }
+      50% { transform: translate(2px, -1px); }
+      75% { transform: translate(-1px, 2px); }
+    }
+
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .deer-svg {
+      width: min(320px, 80vw);
+      margin-bottom: 2rem;
+      animation: float 6s ease-in-out infinite;
+      opacity: 0.88;
+    }
+    /* To use your own logo, replace the <svg> below with:
+       <img src="cervidae.jpg" class="deer-svg" alt="Cervidae"> */
+
+    @keyframes float {
+      0%,100% { transform: translateY(0px) rotate(-1deg); }
+      50% { transform: translateY(-18px) rotate(1deg); }
+    }
+
+    .band-title {
+      font-family: 'Special Elite', serif;
+      font-size: clamp(3rem, 10vw, 7rem);
+      color: #1a1410;
+      letter-spacing: 0.08em;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+      animation: flicker 8s ease-in-out infinite;
+    }
+    @keyframes flicker {
+      0%,100%,96%,98% { opacity: 1; }
+      97%,99% { opacity: 0.6; }
+    }
+
+    .tagline {
+      font-size: 0.9rem;
+      font-weight: 100;
+      letter-spacing: 0.5em;
+      color: #000;
+      text-transform: uppercase;
+      margin-bottom: 3rem;
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 2rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.4em;
+      color: #aaa09a;
+      text-transform: uppercase;
+      animation: pulse-hint 2s ease-in-out infinite;
+    }
+    @keyframes pulse-hint {
+      0%,100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+
+    .divider {
+      width: 1px;
+      height: 60px;
+      background: linear-gradient(to bottom, transparent, #b0a898, transparent);
+      margin: 0 auto 4rem;
+    }
+
+    section {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 4rem 2rem;
+    }
+
+    .section-label {
+      font-family: 'Special Elite', serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.5em;
+      color: #3a3630;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #d4cdc2;
+    }
+
+    .show-list { list-style: none; }
+    .show-item {
+      display: grid;
+      grid-template-columns: 80px 1fr auto;
+      gap: 1rem;
+      align-items: center;
+      padding: 1.2rem 0;
+      border-bottom: 1px solid #ddd5c8;
+      transition: all 0.3s;
+      cursor: none;
+    }
+    .show-item:hover {
+      background: #e8e0d2;
+      padding-left: 1rem;
+      border-color: #b0a898;
+    }
+    .show-item:hover .show-venue { color: #1a1410; }
+
+    .show-date {
+      font-family: 'Special Elite', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      color: #413c37;
+      text-transform: uppercase;
+    }
+    .show-venue {
+      font-size: 0.85rem;
+      color: #4a4038;
+      transition: color 0.3s;
+    }
+    .show-city {
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      color: #aaa09a;
+      text-transform: uppercase;
+    }
+
+    .releases {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1.5rem;
+    }
+    .release-card {
+      aspect-ratio: 1;
+      background: #e8e2d8;
+      border: 1px solid #d0c8bc;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 1.5rem;
+      transition: border-color 0.3s, transform 0.3s;
+      cursor: none;
+      position: relative;
+      overflow: hidden;
+    }
+    .release-card:hover { border-color: #8a7f72; transform: translateY(-4px); }
+
+    .release-year {
+      font-size: 0.6rem;
+      letter-spacing: 0.5em;
+      color: #aaa09a;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+    }
+    .release-title {
+      font-family: 'Special Elite', serif;
+      font-size: 1.4rem;
+      color: #2a2018;
+      line-height: 1.2;
+    }
+    .release-type {
+      font-size: 0.6rem;
+      letter-spacing: 0.4em;
+      color: #b0a898;
+      margin-top: 0.5rem;
+      text-transform: uppercase;
+    }
+
+    .section-divider {
+      text-align: center;
+      color: #c8c0b4;
+      font-size: 1rem;
+      margin: 2rem 0;
+      letter-spacing: 0.8em;
+      user-select: none;
+      font-family: 'Special Elite', serif;
+    }
+
+    .contact-links {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    .contact-link {
+      font-family: 'Special Elite', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.4em;
+      color: #8a7f72;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.3s;
+      cursor: none;
+      border-bottom: 1px solid #d0c8bc;
+      padding-bottom: 2px;
+    }
+    .contact-link:hover { color: #1a1410; border-color: #8a7f72; }
+
+    .particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+    .particle {
+      position: absolute;
+      background: #1a141020;
+      border-radius: 50%;
+      animation: drift linear infinite;
+    }
+    @keyframes drift {
+      0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 0.4; }
+      100% { transform: translateY(-10vh) translateX(var(--drift)); opacity: 0; }
+    }
+
+    footer {
+      text-align: center;
+      padding: 3rem 2rem;
+      font-family: 'Special Elite', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.4em;
+      color: #c0b8b0;
+      text-transform: uppercase;
+      border-top: 1px solid #ddd5c8;
+    }
+  </style>
 </head>
 <body>
-<!-- quanioz drew ts -->
-    <img src="cervidae.jpg" alt="Cervidae">
+
+  <div id="cursor"></div>
+  <div id="cursor-dot"></div>
+  <div id="grain"></div>
+  <div class="particles" id="particles"></div>
+
+  <section id="hero" style="max-width:100%;padding:2rem;">
+<img src="cervidae.jpg" class="deer-svg" alt="Cervidae">
+
+    <h1 class="band-title">CERVIDAE</h1>
+    <p class="tagline">shoegaze &middot; glasgow &middot; losers</p>
+    <p class="scroll-hint">scroll</p>
+  </section>
+
+  <div class="divider"></div>
+
+  <section>
+    <div class="section-label">Shows</div>
+   <!-- <ul class="show-list">
+      <li class="show-item">
+        <span class="show-date">May 03</span>
+        <span class="show-venue">The Windmill</span>
+        <span class="show-city">London</span>
+      </li>
+    </ul> -->
+  </section>
+
+  <div class="section-divider">* * *</div>
+
+  <section>
+    <div class="section-label">Releases</div>
+   <!-- <div class="releases">
+      <div class="release-card">
+        <div class="release-year">2024</div>
+        <div class="release-title">Hollow Crown</div>
+        <div class="release-type">LP</div>
+      </div>  -->
+    </div> 
+  </section>
+
+  <div class="section-divider">* * *</div>
+
+  <section>
+    <div class="section-label">Contact</div>
+    <div class="contact-links">
+      <a href="#" class="contact-link">Bandcamp</a>
+      <a href="https://instagram.com/cervidae.band" class="contact-link">Instagram</a>
+      <a href="#" class="contact-link">Spotify</a>
+      <a href="mailto:rayennoth@gmail.com" class="contact-link">Booking</a>
+    </div>
+  </section>
+
+  <footer>
+    Cervidae &nbsp;&middot;&nbsp; all sounds belong to the void
+  </footer>
+
+  <script>
+    const cursor = document.getElementById('cursor');
+    const dot = document.getElementById('cursor-dot');
+    let mx = -100, my = -100, cx = -100, cy = -100;
+
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+
+    function animCursor() {
+      cx += (mx - cx) * 0.15;
+      cy += (my - cy) * 0.15;
+      cursor.style.left = cx + 'px';
+      cursor.style.top = cy + 'px';
+      dot.style.left = mx + 'px';
+      dot.style.top = my + 'px';
+      requestAnimationFrame(animCursor);
+    }
+    animCursor();
+
+    document.querySelectorAll('a, .show-item, .release-card').forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('big'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
+    });
+
+    const pc = document.getElementById('particles');
+    for (let i = 0; i < 30; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.style.cssText = `
+        left: ${Math.random() * 100}%;
+        width: ${Math.random() * 2 + 1}px;
+        height: ${Math.random() * 2 + 1}px;
+        animation-duration: ${Math.random() * 20 + 15}s;
+        animation-delay: -${Math.random() * 20}s;
+        --drift: ${(Math.random() - 0.5) * 120}px;
+        opacity: ${Math.random() * 0.3};
+      `;
+      pc.appendChild(p);
+    }
+
+    window.addEventListener('scroll', () => {
+      const s = window.scrollY;
+      const hero = document.getElementById('hero');
+      hero.style.transform = `translateY(${s * 0.35}px)`;
+      hero.style.opacity = 1 - s * 0.0015;
+    }, { passive: true });
+  </script>
 
 </body>
 </html>
